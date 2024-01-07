@@ -36,6 +36,7 @@ async def delete_scam_message(msg: Message, time_start: datetime):
 @bot.on_message(only_group_filter)
 async def antispam(client, msg: Message):
     # await db.init_models()
+    await db.add_chat(chat_id=msg.chat.id, chat_title=msg.chat.title)
     time_start = datetime.now()
     is_admin = False
     if msg.from_user:

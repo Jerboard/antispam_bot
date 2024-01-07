@@ -18,7 +18,7 @@ ChatTable = sa.Table(
     METADATA,
     sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
     sa.Column('chat_id', sa.BigInteger),
-    sa.Column('media_group_id', sa.String(255)),
+    sa.Column('chat_title', sa.String(255)),
 )
 
 
