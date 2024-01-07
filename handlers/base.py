@@ -2,6 +2,7 @@ import logging
 import re
 
 from pyrogram.types import Message
+from pyrogram.enums import ChatMemberStatus
 
 from difflib import SequenceMatcher
 from datetime import datetime
@@ -36,12 +37,15 @@ async def delete_scam_message(msg: Message, time_start: datetime):
 async def antispam(client, msg: Message):
     # await db.init_models()
     time_start = datetime.now()
-    user = await bot.get_chat_member(msg.chat.id, msg.from_user.id)
-    is_anonymous_admin = False
-    if msg.from_user.username == 'GroupAnonymousBot' or msg.from_user.id in [777000, 1148629068]:
-        is_anonymous_admin = True
+    is_admin = False
+    if msg.from_user:
+        user = await bot.get_chat_member(msg.chat.id, msg.from_user.id)
+        if user.status == ChatMemberStatus.OWNER or user.status == ChatMemberStatus.ADMINISTRATOR:
+            is_admin = True
+    else:
+        is_admin = True
 
-    if user.status == 'creator' or user.status == 'administrator' or is_anonymous_admin is True:
+    if is_admin:
         pass
     else:
         text = msg.text if msg.text is not None else msg.caption

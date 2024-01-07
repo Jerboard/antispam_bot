@@ -24,7 +24,6 @@ SpeedTable = sa.Table(
 async def add_action(time_start: datetime) -> None:
     different = datetime.now () - time_start
     speed = float (f'{different.seconds}.{different.microseconds}')
-    print(speed)
     async with begin_connection () as conn:
         await conn.execute(
             SpeedTable.insert ().values (
