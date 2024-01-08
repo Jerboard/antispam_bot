@@ -3,6 +3,7 @@ import re
 
 from pyrogram.types import Message
 from pyrogram.enums import ChatMemberStatus
+from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 
 from difflib import SequenceMatcher
 from datetime import datetime
@@ -40,9 +41,13 @@ async def antispam(client, msg: Message):
     time_start = datetime.now()
     is_admin = False
     if msg.from_user:
-        user = await bot.get_chat_member(msg.chat.id, msg.from_user.id)
-        if user.status == ChatMemberStatus.OWNER or user.status == ChatMemberStatus.ADMINISTRATOR:
-            is_admin = True
+        try:
+            user = await bot.get_chat_member(msg.chat.id, msg.from_user.id)
+            if user.status == ChatMemberStatus.OWNER or user.status == ChatMemberStatus.ADMINISTRATOR:
+                is_admin = True
+        except UserNotParticipant:
+            pass
+
     else:
         is_admin = True
 
@@ -88,3 +93,4 @@ async def antispam(client, msg: Message):
             await msg.delete()
 
     await db.add_action(time_start=time_start)
+
