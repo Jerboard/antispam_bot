@@ -15,12 +15,17 @@ from utils.message_utils import get_full_name, check_entities
 
 async def delete_scam_message(msg: Message, time_start: datetime):
     await msg.delete()
+    logging.warning(f'Удалил сообщение')
 
     if msg.media_group_id:
         await db.add_mediagroup(chat_id=msg.chat.id, media_group_id=msg.media_group_id)
 
     all_chats = await db.get_all_chats()
     for chat in all_chats:
+        logging.warning (
+            f'Баню пользователя: '
+            f'{msg.from_user.id, msg.from_user.first_name, msg.from_user.last_name, msg.from_user.username}\n'
+            f'в чате')
         try:
             await bot.ban_chat_member(
                 chat_id=chat.chat_id,
@@ -36,6 +41,8 @@ async def delete_scam_message(msg: Message, time_start: datetime):
 @bot.on_edited_message(only_group_filter)
 @bot.on_message(only_group_filter)
 async def antispam(client, msg: Message):
+    # if msg.chat.id == -1001605611339:
+    #     return
     # await db.init_models()
     await db.add_chat(chat_id=msg.chat.id, chat_title=msg.chat.title)
     time_start = datetime.now()
@@ -51,6 +58,7 @@ async def antispam(client, msg: Message):
     else:
         is_admin = True
 
+    # is_admin = False
     if is_admin:
         pass
     else:
@@ -88,9 +96,14 @@ async def antispam(client, msg: Message):
                 await msg.delete()
                 return
 
-        similarity_ratio = SequenceMatcher (None, msg.chat.title, user_full_name).ratio ()
-        if similarity_ratio >= 0.85:
+        similarity_ratio = SequenceMatcher (
+            None,
+            msg.chat.title.replace(' ', ''),
+            user_full_name.replace(' ', '').replace('_', '')
+        ).ratio ()
+        if similarity_ratio >= 0.8:
             await msg.delete()
+            logging.warning (f'del ratio\n{msg.chat.title} == {user_full_name}')
 
     await db.add_action(time_start=time_start)
 
