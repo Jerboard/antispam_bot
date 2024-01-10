@@ -15,14 +15,14 @@ from utils.message_utils import get_full_name, check_entities
 
 async def delete_scam_message(msg: Message, time_start: datetime):
     await msg.delete()
-    logging.warning(f'Удалил сообщение')
+    log_error(f'Удалил сообщение')
 
     if msg.media_group_id:
         await db.add_mediagroup(chat_id=msg.chat.id, media_group_id=msg.media_group_id)
 
     all_chats = await db.get_all_chats()
     for chat in all_chats:
-        logging.warning (
+        log_error (
             f'Баню пользователя: '
             f'{msg.from_user.id, msg.from_user.first_name, msg.from_user.last_name, msg.from_user.username}\n'
             f'в чате')
@@ -32,7 +32,7 @@ async def delete_scam_message(msg: Message, time_start: datetime):
                 user_id=msg.from_user.id
             )
         except Exception as ex:
-            logging.warning(f'{msg.from_user.id} {ex}')
+            log_error(f'{msg.from_user.id} {ex}')
 
     await db.add_action (time_start=time_start)
 
@@ -68,10 +68,11 @@ async def antispam(client, msg: Message):
 
         arabic_name = ARABIC_PATTERN.findall (user_full_name)
         if arabic_name or msg.from_user.is_bot:
-            await delete_scam_message(
-                msg=msg,
-                time_start=time_start)
-            return
+            log_error (f'\nАрабик: {user_full_name}\n')
+            # await delete_scam_message(
+            #     msg=msg,
+            #     time_start=time_start)
+            # return
 
         if text:
             entities = msg.entities if msg.entities else msg.caption_entities
@@ -85,10 +86,11 @@ async def antispam(client, msg: Message):
 
             arabic_text = ARABIC_PATTERN.findall (text)
             if arabic_text:
-                await delete_scam_message (
-                    msg=msg,
-                    time_start=time_start)
-                return
+                log_error(f'\nАрабик: {user_full_name}\n')
+                # await delete_scam_message (
+                #     msg=msg,
+                #     time_start=time_start)
+                # return
 
         if msg.media_group_id:
             result = await db.get_mediagroup(msg.media_group_id)
@@ -102,8 +104,11 @@ async def antispam(client, msg: Message):
             user_full_name.replace(' ', '').replace('_', '')
         ).ratio ()
         if similarity_ratio >= 0.8:
-            await msg.delete()
-            logging.warning (f'del ratio\n{msg.chat.title} == {user_full_name}')
+            log_error (f'del ratio\n{msg.chat.title} == {user_full_name}')
+            await delete_scam_message (
+                msg=msg,
+                time_start=time_start)
 
     await db.add_action(time_start=time_start)
+
 

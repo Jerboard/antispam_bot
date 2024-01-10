@@ -17,6 +17,7 @@ SpeedTable = sa.Table(
     METADATA,
     sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
     sa.Column('speed', sa.Float),
+
 )
 
 
