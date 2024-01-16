@@ -27,10 +27,10 @@ def check_entities(entities: list[MessageEntity]) -> bool:
             #     delete_message = True
             #     source = 'HASHTAG'
             #     break
-            # elif entity.type == MessageEntityType.MENTION:
-            #     delete_message = True
-            #     source = 'MENTION'
-            #     break
+            elif entity.type == MessageEntityType.MENTION:
+                delete_message = True
+                source = 'MENTION'
+                break
 
     if delete_message:
         logging.warning(f'del entities {source}')
