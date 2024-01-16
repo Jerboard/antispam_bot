@@ -20,19 +20,19 @@ async def delete_scam_message(msg: Message, time_start: datetime):
     if msg.media_group_id:
         await db.add_mediagroup(chat_id=msg.chat.id, media_group_id=msg.media_group_id)
 
-    all_chats = await db.get_all_chats()
-    for chat in all_chats:
-        log_error (
-            f'Баню пользователя: '
-            f'{msg.from_user.id, msg.from_user.first_name, msg.from_user.last_name, msg.from_user.username}\n'
-            f'в чате')
-        try:
-            await bot.ban_chat_member(
-                chat_id=chat.chat_id,
-                user_id=msg.from_user.id
-            )
-        except Exception as ex:
-            log_error(f'{msg.from_user.id} {ex}')
+    # all_chats = await db.get_all_chats()
+    # for chat in all_chats:
+    log_error (
+        f'Баню пользователя: '
+        f'{msg.from_user.id, msg.from_user.first_name, msg.from_user.last_name, msg.from_user.username}\n'
+        f'в чате')
+    try:
+        await bot.ban_chat_member(
+            chat_id=msg.chat.id,
+            user_id=msg.from_user.id
+        )
+    except Exception as ex:
+        log_error(f'{msg.from_user.id} {ex}')
 
     await db.add_action (time_start=time_start)
 

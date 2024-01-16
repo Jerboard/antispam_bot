@@ -47,6 +47,6 @@ async def add_mediagroup(chat_id: int, media_group_id: int):
 async def get_mediagroup(media_group_id: int):
     async with begin_connection () as conn:
         result = await conn.execute(
-            MediaGroupTable.select().where(media_group_id == media_group_id)
+            MediaGroupTable.select().where(MediaGroupTable.c.media_group_id == media_group_id)
         )
     return result.first()
