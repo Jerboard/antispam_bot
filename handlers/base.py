@@ -11,6 +11,7 @@ from datetime import datetime
 import db
 from init import bot, only_group_filter, ARABIC_PATTERN, log_error
 from utils.message_utils import get_full_name, check_entities
+from db.base import init_models
 
 
 async def delete_scam_message(msg: Message, time_start: datetime):
@@ -25,7 +26,8 @@ async def delete_scam_message(msg: Message, time_start: datetime):
     log_error (
         f'Баню пользователя: '
         f'{msg.from_user.id, msg.from_user.first_name, msg.from_user.last_name, msg.from_user.username}\n'
-        f'в чате')
+        f'В чате {msg.chat.title}\n'
+        f'Текст: {msg.text}')
     try:
         await bot.ban_chat_member(
             chat_id=msg.chat.id,
@@ -41,8 +43,6 @@ async def delete_scam_message(msg: Message, time_start: datetime):
 @bot.on_edited_message(only_group_filter)
 @bot.on_message(only_group_filter)
 async def antispam(client, msg: Message):
-    # if msg.chat.id == -1001605611339:
-    #     return
     # await db.init_models()
     await db.add_chat(chat_id=msg.chat.id, chat_title=msg.chat.title)
     time_start = datetime.now()
@@ -57,7 +57,7 @@ async def antispam(client, msg: Message):
 
     else:
         is_admin = True
-
+    print(is_admin)
     # is_admin = False
     if is_admin:
         pass

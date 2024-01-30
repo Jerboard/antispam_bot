@@ -22,7 +22,7 @@ except:
 
 load_dotenv ()
 
-
+DEBUG = bool(int(getenv('DEBUG')))
 TZ = timezone('Europe/Moscow')
 ENGINE = create_async_engine(url=getenv('DB_URL'))
 MY_ID = int(getenv('MY_ID'))
@@ -30,8 +30,6 @@ MY_ID = int(getenv('MY_ID'))
 API_ID = getenv('API_ID')
 API_HAS = getenv('API_HAS')
 
-logging.basicConfig(level=logging.WARNING)
-# logging.basicConfig(level=logging.WARNING, filename='log.log')
 
 only_group_filter = filters.create(group_filter)
 
