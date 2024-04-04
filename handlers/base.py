@@ -43,6 +43,7 @@ async def delete_scam_message(msg: Message, time_start: datetime):
 @bot.on_edited_message(only_group_filter)
 @bot.on_message(only_group_filter)
 async def antispam(client, msg: Message):
+    await bot.get_chat_invite_link()
     # await db.init_models()
     await db.add_chat(chat_id=msg.chat.id, chat_title=msg.chat.title)
     time_start = datetime.now()
@@ -57,7 +58,6 @@ async def antispam(client, msg: Message):
 
     else:
         is_admin = True
-    print(is_admin)
     # is_admin = False
     if is_admin:
         pass
