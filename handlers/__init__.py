@@ -1,3 +1,3 @@
-from .base import bot
+from .base import dp
 
-__all__ = ['bot']
+__all__ = ['dp']

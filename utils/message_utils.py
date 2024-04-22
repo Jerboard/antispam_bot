@@ -1,7 +1,7 @@
-import logging
+from aiogram.types import MessageEntity
+from aiogram.enums.message_entity_type import MessageEntityType
 
-from pyrogram.types import MessageEntity
-from pyrogram.enums import MessageEntityType
+from init import log_error
 
 
 def get_full_name(first_name, last_name):
@@ -14,7 +14,7 @@ def check_entities(entities: list[MessageEntity]) -> bool:
     source = None
     if entities:
         for entity in entities:
-            # print (type (entity.type), entity.type)
+            print (type (entity.type), entity.type)
             if entity.type == MessageEntityType.TEXT_LINK:
                 delete_message = True
                 source = 'TEXT_LINK'
@@ -33,6 +33,6 @@ def check_entities(entities: list[MessageEntity]) -> bool:
                 break
 
     if delete_message:
-        logging.warning(f'del entities {source}')
+        log_error(f'del entities {source}', with_traceback=False)
 
     return delete_message
