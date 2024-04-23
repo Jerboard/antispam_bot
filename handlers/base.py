@@ -38,10 +38,10 @@ async def delete_scam_message(msg: Message, time_start: datetime):
 async def antispam(msg: Message):
     # await db.add_chat(chat_id=msg.chat.id, chat_title=msg.chat.title)
     time_start = datetime.now()
-    print(msg.from_user)
+    # print(msg.from_user)
     is_admin = False
 
-    if msg.from_user.username == 'GroupAnonymousBot':
+    if msg.from_user.username == 'GroupAnonymousBot' or msg.from_user.id == 777000:
         is_admin = True
 
     else:
