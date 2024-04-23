@@ -7,7 +7,6 @@ from datetime import datetime
 import db
 from init import dp, bot, ARABIC_PATTERN, log_error
 from utils.message_utils import get_full_name, check_entities
-from db.base import init_models
 
 
 async def delete_scam_message(msg: Message, time_start: datetime):
@@ -19,7 +18,7 @@ async def delete_scam_message(msg: Message, time_start: datetime):
 
     log_error (
         f'Баню пользователя: '
-        f'{msg.from_user.id, msg.from_user.first_name, msg.from_user.last_name, msg.from_user.username}\n'
+        f'{msg.from_user.id, msg.from_user.full_name, msg.from_user.username}\n'
         f'В чате {msg.chat.title}\n'
         f'Текст: {msg.text}', with_traceback=False)
     try:
@@ -37,12 +36,15 @@ async def delete_scam_message(msg: Message, time_start: datetime):
 @dp.message(lambda msg: msg.chat.type == 'supergroup' or msg.chat.type == 'group')
 @dp.edited_message(lambda msg: msg.chat.type == 'supergroup' or msg.chat.type == 'group')
 async def antispam(msg: Message):
-    print('antispam')
-
     # await db.add_chat(chat_id=msg.chat.id, chat_title=msg.chat.title)
     time_start = datetime.now()
+    print(msg.from_user)
     is_admin = False
-    if msg.from_user:
+
+    if msg.from_user.username == 'GroupAnonymousBot':
+        is_admin = True
+
+    else:
         try:
             user = await bot.get_chat_member(msg.chat.id, msg.from_user.id)
             if user.status == ChatMemberStatus.CREATOR or user.status == ChatMemberStatus.ADMINISTRATOR:
@@ -50,8 +52,6 @@ async def antispam(msg: Message):
         except:
             pass
 
-    else:
-        is_admin = True
     # is_admin = False
     if is_admin:
         pass
@@ -60,7 +60,8 @@ async def antispam(msg: Message):
 
         arabic_name = ARABIC_PATTERN.findall (msg.from_user.full_name)
         if arabic_name or msg.from_user.is_bot:
-            log_error (f'\nАрабик: {msg.from_user.full_name}\n', with_traceback=False)
+            # log_error (f'\nАрабик: {msg.from_user.full_name}\n', with_traceback=False)
+            pass
 
         if text:
             entities = msg.entities if msg.entities else msg.caption_entities
@@ -74,7 +75,8 @@ async def antispam(msg: Message):
 
             arabic_text = ARABIC_PATTERN.findall (text)
             if arabic_text:
-                log_error(f'\nАрабик: {msg.from_user.full_name}\n')
+                pass
+                # log_error(f'\nАрабик: {msg.from_user.full_name}\n')
                 # await delete_scam_message (
                 #     msg=msg,
                 #     time_start=time_start)
