@@ -23,7 +23,6 @@ class Config:
     admins = [524275902, 1456925942, 650850638]
 
     data_path = 'data'
-    wl_filename = 'white_list.json'
 
     @staticmethod
     def debug(self):

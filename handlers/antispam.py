@@ -1,5 +1,6 @@
 from aiogram.types import Message
 from aiogram.enums.chat_member_status import ChatMemberStatus
+from aiogram.enums.message_entity_type import MessageEntityType
 
 from difflib import SequenceMatcher
 from datetime import datetime
@@ -9,9 +10,14 @@ from init import dp, bot, log_error
 from config import Config
 from utils.message_utils import check_entities
 from utils import local_data_utils as dt
+from enums import lists_ex, ListEx
 
 
 async def delete_scam_message(msg: Message, time_start: datetime):
+    text = msg.text if msg.text is not None else msg.caption
+    if dt.check_text_list(text=text, list_ex=ListEx.WL_PHRASE.value):
+        return
+
     await msg.delete()
     log_error(f'Удалил сообщение', with_traceback=False)
 
@@ -39,13 +45,13 @@ async def delete_scam_message(msg: Message, time_start: datetime):
 @dp.edited_message(lambda msg: msg.chat.type == 'supergroup' or msg.chat.type == 'group')
 async def antispam(msg: Message):
     time_start = datetime.now()
-    white_list = dt.get_white_list ()
+    wl_users = dt.get_white_list (lists_ex[ListEx.WL_USERS.value])
     is_admin = False
 
     if msg.from_user.username == 'GroupAnonymousBot' or msg.from_user.id == 777000:
         is_admin = True
 
-    elif msg.from_user.id in white_list or msg.from_user.username in white_list:
+    elif str(msg.from_user.id) in wl_users or msg.from_user.username in wl_users:
         is_admin = True
 
     else:
@@ -63,14 +69,40 @@ async def antispam(msg: Message):
         text = msg.text if msg.text is not None else msg.caption
 
         if text:
-            entities = msg.entities if msg.entities else msg.caption_entities
-
-            # если по вложениям всё ок
-            if check_entities(entities):
+            if dt.check_text_list (text=text, list_ex=ListEx.BL_PHRASE.value):
                 await delete_scam_message (
                     msg=msg,
                     time_start=time_start)
                 return
+
+            entities = msg.entities if msg.entities else msg.caption_entities
+
+            # если по вложениям всё ок
+            if check_entities(entities):
+                dm = True
+
+                check_url_list = []
+                for entity in entities:
+                    if entity.type == MessageEntityType.TEXT_LINK:
+                        check_url_list.append (entity.url)
+
+                    elif entity.type == MessageEntityType.URL:
+                        url = text[entity.offset:entity.offset + entity.length]
+                        check_url_list.append(url)
+
+                if check_url_list:
+                    for url in check_url_list:
+                        if not dt.check_text_list (text=url, list_ex=ListEx.WL_URL.value):
+                            await delete_scam_message (
+                                msg=msg,
+                                time_start=time_start)
+                            return
+
+                else:
+                    await delete_scam_message (
+                        msg=msg,
+                        time_start=time_start)
+                    return
 
             # arabic_text = Config.arabic_pattern.findall (text)
 
