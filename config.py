@@ -18,10 +18,6 @@ class Config:
     db_url = getenv('DB_URL')
 
     tz = timezone ('Europe/Moscow')
-    my_id = int (getenv ('MY_ID'))
-
-    api_id = getenv ('API_ID')
-    api_hash = getenv ('API_HAS')
 
     arabic_pattern = re.compile (r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]+')
     admins = [524275902, 1456925942, 650850638]
