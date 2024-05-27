@@ -16,21 +16,25 @@ async def get_admin_start_screen(user_id: int, message_id: int = None):
 
     if wl_users:
         wl_users_text = f'<b>⚪️ Белый список пользователей:</b>\n' + "\n".join(wl_users)
+        # wl_users_text = f'<b>⚪️ Whitelist of users:</b>\n' + "\n".join(wl_users)
     else:
         wl_users_text = '<b>⚪️ Белый список пользователей пуст</b>'
 
     if wl_phrase:
+        # wl_phrase_text = f'<b>⚪️ Whitelist of phrases:</b>\n' + "\n".join(wl_phrase)
         wl_phrase_text = f'<b>⚪️ Белый список фраз:</b>\n' + "\n".join(wl_phrase)
     else:
         wl_phrase_text = '<b>⚪️ Белый список фраз пуст</b>'
 
     if wl_url:
+        # wl_url_text = f'<b>⚪️ The white list of links:</b>\n' + "\n".join(wl_url)
         wl_url_text = f'<b>⚪️ Белый список ссылок:</b>\n' + "\n".join(wl_url)
     else:
         wl_url_text = '<b>⚪️ Белый список ссылок пуст</b>'
 
     if bl_phrase:
         bl_phrase_text = f'<b>⚫️ Чёрный список фраз:</b>\n' + "\n".join(bl_phrase)
+        # bl_phrase_text = f'<b>⚫️ Blacklist of phrases:</b>\n' + "\n".join(bl_phrase)
     else:
         bl_phrase_text = '<b>⚫️ Чёрный список фраз пуст</b>'
 

@@ -3,7 +3,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup
 from enums import AdminCB, ListEx
 
 
-# главная клавиатура
+# # главная клавиатура
 def get_main_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text='➕ БС пользователей', callback_data=f'{AdminCB.ADD_WL.value}:{ListEx.WL_USERS.value}')
@@ -15,6 +15,20 @@ def get_main_kb() -> InlineKeyboardMarkup:
     kb.button(text='➕ ЧС фраз', callback_data=f'{AdminCB.ADD_WL.value}:{ListEx.BL_PHRASE.value}')
     kb.button(text='➖ ЧС фраз', callback_data=f'{AdminCB.DEL_WL.value}:{ListEx.BL_PHRASE.value}')
     return kb.adjust(2).as_markup()
+
+
+# главная клавиатура
+# def get_main_kb() -> InlineKeyboardMarkup:
+#     kb = InlineKeyboardBuilder()
+#     kb.button(text='➕ WL users', callback_data=f'{AdminCB.ADD_WL.value}:{ListEx.WL_USERS.value}')
+#     kb.button(text='➖ WL users', callback_data=f'{AdminCB.DEL_WL.value}:{ListEx.WL_USERS.value}')
+#     kb.button(text='➕ WL url', callback_data=f'{AdminCB.ADD_WL.value}:{ListEx.WL_URL.value}')
+#     kb.button(text='➖ WL url', callback_data=f'{AdminCB.DEL_WL.value}:{ListEx.WL_URL.value}')
+#     kb.button(text='➕ WL phrase', callback_data=f'{AdminCB.ADD_WL.value}:{ListEx.WL_PHRASE.value}')
+#     kb.button(text='➖ WL phrase', callback_data=f'{AdminCB.DEL_WL.value}:{ListEx.WL_PHRASE.value}')
+#     kb.button(text='➕ BL phrase', callback_data=f'{AdminCB.ADD_WL.value}:{ListEx.BL_PHRASE.value}')
+#     kb.button(text='➖ BL phrase', callback_data=f'{AdminCB.DEL_WL.value}:{ListEx.BL_PHRASE.value}')
+#     return kb.adjust(2).as_markup()
 
 
 # назад на главный экран
