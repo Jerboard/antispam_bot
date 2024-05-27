@@ -18,27 +18,26 @@ async def delete_scam_message(msg: Message, time_start: datetime):
     if dt.check_text_list(text=text, list_ex=ListEx.WL_PHRASE.value):
         return
 
-    # await msg.delete()
-    print(f'БАН!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    # log_error(f'Удалил сообщение', with_traceback=False)
-    #
-    # if msg.media_group_id:
-    #     await db.add_mediagroup(chat_id=msg.chat.id, media_group_id=int(msg.media_group_id))
-    #
-    # log_error (
-    #     f'Баню пользователя: '
-    #     f'{msg.from_user.id, msg.from_user.full_name, msg.from_user.username}\n'
-    #     f'В чате {msg.chat.title}\n'
-    #     f'Текст: {msg.text}', with_traceback=False)
-    # try:
-    #     await bot.ban_chat_member(
-    #         chat_id=msg.chat.id,
-    #         user_id=msg.from_user.id
-    #     )
-    # except Exception as ex:
-    #     log_error(ex)
+    await msg.delete()
+    log_error(f'Удалил сообщение', with_traceback=False)
 
-    # await db.add_action (time_start=time_start)
+    if msg.media_group_id:
+        await db.add_mediagroup(chat_id=msg.chat.id, media_group_id=int(msg.media_group_id))
+
+    log_error (
+        f'Баню пользователя: '
+        f'{msg.from_user.id, msg.from_user.full_name, msg.from_user.username}\n'
+        f'В чате {msg.chat.title}\n'
+        f'Текст: {msg.text}', with_traceback=False)
+    try:
+        await bot.ban_chat_member(
+            chat_id=msg.chat.id,
+            user_id=msg.from_user.id
+        )
+    except Exception as ex:
+        log_error(ex)
+
+    await db.add_action (time_start=time_start)
 
 
 # арабская вязь, имя канала,
