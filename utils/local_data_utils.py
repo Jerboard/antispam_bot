@@ -59,7 +59,6 @@ def check_text_list(text: str, list_ex: str) -> bool:
 
     for el in list_:
         pattern = re.escape(el).replace(r'\*', '.*')
-    #     match = re.search (el.replace ('*', '\W'), text, re.IGNORECASE)
         match = re.search (pattern, text, re.IGNORECASE)
         if match:
             result = True

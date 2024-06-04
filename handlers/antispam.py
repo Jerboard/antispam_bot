@@ -8,7 +8,7 @@ from datetime import datetime
 import db
 from init import dp, bot, log_error
 from config import Config
-from utils.message_utils import check_entities
+from utils.message_utils import check_entities, check_hashtags
 from utils import local_data_utils as dt
 from enums import lists_ex, ListEx
 
@@ -67,6 +67,7 @@ async def antispam(msg: Message):
         pass
     else:
         text = msg.text if msg.text is not None else msg.caption
+        entities = msg.entities if msg.entities else msg.caption_entities
 
         if text:
             if dt.check_text_list (text=text, list_ex=ListEx.BL_PHRASE.value):
@@ -75,7 +76,9 @@ async def antispam(msg: Message):
                     time_start=time_start)
                 return
 
-            entities = msg.entities if msg.entities else msg.caption_entities
+            if check_hashtags(entities, text):
+                await delete_scam_message (msg=msg, time_start=time_start)
+                return
 
             # если по вложениям всё ок
             if check_entities(entities):

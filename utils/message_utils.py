@@ -88,3 +88,21 @@ def check_entities(entities: list[MessageEntity]) -> bool:
         log_error(f'del entities {source}', with_traceback=False)
 
     return delete_message
+
+
+# проверяет хештеги
+def check_hashtags(entities: list[MessageEntity], text: str) -> bool:
+    delete_message = False
+
+    if entities:
+        for entity in entities:
+            if entity.type == MessageEntityType.HASHTAG:
+                tag = text[entity.offset:entity.offset + entity.length]
+                if not dt.check_text_list (text=tag, list_ex=ListEx.WL_PHRASE.value):
+                    delete_message = True
+                    break
+
+    if delete_message:
+        log_error(f'del hashtag', with_traceback=False)
+
+    return delete_message
