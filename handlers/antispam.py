@@ -14,9 +14,6 @@ from enums import lists_ex, ListEx
 
 
 async def delete_scam_message(msg: Message, time_start: datetime):
-    text = msg.text if msg.text is not None else msg.caption
-    if dt.check_text_list(text=text, list_ex=ListEx.WL_PHRASE.value):
-        return
 
     await msg.delete()
     log_error(f'Удалил сообщение', with_traceback=False)
@@ -82,8 +79,6 @@ async def antispam(msg: Message):
 
             # если по вложениям всё ок
             if check_entities(entities):
-                dm = True
-
                 check_url_list = []
                 for entity in entities:
                     if entity.type == MessageEntityType.TEXT_LINK:

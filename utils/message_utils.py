@@ -22,9 +22,9 @@ async def get_admin_start_screen(user_id: int, message_id: int = None):
 
     if wl_phrase:
         # wl_phrase_text = f'<b>⚪️ Whitelist of phrases:</b>\n' + "\n".join(wl_phrase)
-        wl_phrase_text = f'<b>⚪️ Белый список фраз:</b>\n' + "\n".join(wl_phrase)
+        wl_phrase_text = f'<b>⚪️ Белый список хештегов и юзернеймов:</b>\n' + "\n".join(wl_phrase)
     else:
-        wl_phrase_text = '<b>⚪️ Белый список фраз пуст</b>'
+        wl_phrase_text = '<b>⚪️ Белый список хештегов и юзернеймов пуст</b>'
 
     if wl_url:
         # wl_url_text = f'<b>⚪️ The white list of links:</b>\n' + "\n".join(wl_url)
@@ -79,10 +79,6 @@ def check_entities(entities: list[MessageEntity]) -> bool:
                 delete_message = True
                 source = 'CODE'
                 break
-            elif entity.type == MessageEntityType.MENTION:
-                delete_message = True
-                source = 'MENTION'
-                break
 
     if delete_message:
         log_error(f'del entities {source}', with_traceback=False)
@@ -99,6 +95,12 @@ def check_hashtags(entities: list[MessageEntity], text: str) -> bool:
             if entity.type == MessageEntityType.HASHTAG:
                 tag = text[entity.offset:entity.offset + entity.length]
                 if not dt.check_text_list (text=tag, list_ex=ListEx.WL_PHRASE.value):
+                    delete_message = True
+                    break
+
+            elif entity.type == MessageEntityType.MENTION:
+                mention = text [entity.offset:entity.offset + entity.length]
+                if not dt.check_text_list (text=mention, list_ex=ListEx.WL_PHRASE.value):
                     delete_message = True
                     break
 
