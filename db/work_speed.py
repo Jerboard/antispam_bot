@@ -3,7 +3,6 @@ import typing as t
 
 from datetime import date, datetime
 
-from init import TZ
 from db.base import METADATA, begin_connection
 
 

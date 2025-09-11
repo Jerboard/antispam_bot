@@ -1,7 +1,6 @@
 import typing as t
 import sqlalchemy as sa
 
-from datetime import date
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 from init import ENGINE

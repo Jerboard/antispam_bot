@@ -1,11 +1,29 @@
 from aiogram.types import MessageEntity
 from aiogram.enums.message_entity_type import MessageEntityType
 
-from init import log_error
+import keyboards as kb
+from init import log_error, bot
+from utils import local_data_utils as dt
 
 
-def get_full_name(first_name, last_name):
-    return f'{first_name} {last_name}'.replace('None', '').strip()
+async def get_admin_start_screen(user_id: int, message_id: int = None):
+    white_list = dt.get_white_list ()
+    if white_list:
+        white_text = '<b>Белый список:</b>'
+        for user in white_list:
+            white_text += f'{user}\n'
+    else:
+        white_text = '<b>Белый список пуст</b>'
+
+    if message_id:
+        await bot.edit_message_text(
+            chat_id=user_id,
+            message_id=message_id,
+            text=white_text,
+            reply_markup=kb.get_main_kb ()
+        )
+    else:
+        await bot.send_message (chat_id=user_id, text=white_text, reply_markup=kb.get_main_kb ())
 
 
 # проверяет сущности
@@ -14,7 +32,6 @@ def check_entities(entities: list[MessageEntity]) -> bool:
     source = None
     if entities:
         for entity in entities:
-            print (type (entity.type), entity.type)
             if entity.type == MessageEntityType.TEXT_LINK:
                 delete_message = True
                 source = 'TEXT_LINK'

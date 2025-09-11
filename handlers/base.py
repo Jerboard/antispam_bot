@@ -5,8 +5,10 @@ from difflib import SequenceMatcher
 from datetime import datetime
 
 import db
-from init import dp, bot, ARABIC_PATTERN, log_error
-from utils.message_utils import get_full_name, check_entities
+from init import dp, bot, log_error
+from config import Config
+from utils.message_utils import check_entities
+from utils import local_data_utils as dt
 
 
 async def delete_scam_message(msg: Message, time_start: datetime):
@@ -39,9 +41,13 @@ async def antispam(msg: Message):
     # await db.add_chat(chat_id=msg.chat.id, chat_title=msg.chat.title)
     time_start = datetime.now()
     # print(msg.from_user)
+    white_list = dt.get_white_list ()
     is_admin = False
 
     if msg.from_user.username == 'GroupAnonymousBot' or msg.from_user.id == 777000:
+        is_admin = True
+
+    elif msg.from_user.id in white_list or msg.from_user.username in white_list:
         is_admin = True
 
     else:
@@ -58,7 +64,7 @@ async def antispam(msg: Message):
     else:
         text = msg.text if msg.text is not None else msg.caption
 
-        arabic_name = ARABIC_PATTERN.findall (msg.from_user.full_name)
+        arabic_name = Config.arabic_pattern.findall (msg.from_user.full_name)
         if arabic_name or msg.from_user.is_bot:
             # log_error (f'\nАрабик: {msg.from_user.full_name}\n', with_traceback=False)
             pass
@@ -73,7 +79,7 @@ async def antispam(msg: Message):
                     time_start=time_start)
                 return
 
-            arabic_text = ARABIC_PATTERN.findall (text)
+            arabic_text = Config.arabic_pattern.findall (text)
             if arabic_text:
                 pass
                 # log_error(f'\nАрабик: {msg.from_user.full_name}\n')

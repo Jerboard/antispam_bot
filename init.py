@@ -1,6 +1,7 @@
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher
+from aiogram.types import BotCommand
 from aiogram.fsm.storage.memory import MemoryStorage
-
+from datetime import datetime
 from sqlalchemy.ext.asyncio import create_async_engine
 
 import logging
@@ -9,11 +10,7 @@ import asyncio
 import re
 import os
 
-from datetime import datetime
-
-from dotenv import load_dotenv
-from os import getenv
-from pytz import timezone
+from config import Config
 
 try:
     import uvloop
@@ -21,26 +18,22 @@ try:
 except:
     pass
 
-load_dotenv ()
 loop = asyncio.get_event_loop()
-TOKEN = getenv('TOKEN')
-bot = Bot(TOKEN, parse_mode='html')
+bot = Bot(Config.token, parse_mode='html')
 dp = Dispatcher(loop=loop, storage=MemoryStorage())
 
+ENGINE = create_async_engine(url=Config.db_url)
 
-DEBUG = bool(int(getenv('DEBUG')))
-TZ = timezone('Europe/Moscow')
-ENGINE = create_async_engine(url=getenv('DB_URL'))
-MY_ID = int(getenv('MY_ID'))
 
-API_ID = getenv('API_ID')
-API_HAS = getenv('API_HAS')
-
-ARABIC_PATTERN = re.compile (r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]+')
+async def set_main_menu():
+    main_menu_commands = [
+        BotCommand(command='/start', description='Главный экран'),
+    ]
+    await bot.set_my_commands(main_menu_commands)
 
 
 def log_error(message, with_traceback: bool = True):
-    now = datetime.now(TZ)
+    now = datetime.now(Config.tz)
     log_folder = now.strftime ('%m-%Y')
     log_path = os.path.join('logs', log_folder)
 
@@ -51,6 +44,18 @@ def log_error(message, with_traceback: bool = True):
     logging.basicConfig (level=logging.WARNING, filename=log_file_path, encoding='utf-8')
     if with_traceback:
         ex_traceback = traceback.format_exc()
-        logging.warning(f'=====\n{now}\n{ex_traceback}\n{message}\n=====')
+        tb = ''
+        msg = ''
+        start_row = '  File'
+        tb_split = ex_traceback.split('\n')
+        for row in tb_split:
+            if row.startswith(start_row) and not re.search ('venv', row):
+                tb += f'{row}\n'
+
+            if not row.startswith(' '):
+                msg += f'{row}\n'
+
+        logging.warning(f'{now}\n{tb}\n\n{msg}\n---------------------------------\n')
+        return msg
     else:
-        logging.warning(f'=====\n{now}\n{message}\n=====')
+        logging.warning(f'{now}\n{message}\n\n---------------------------------\n')
