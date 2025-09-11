@@ -1,28 +1,34 @@
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from datetime import datetime
 from sqlalchemy.ext.asyncio import create_async_engine
+from redis.asyncio import Redis
 
 import logging
 import traceback
 import asyncio
 import re
 import os
+import uvloop
 
 from config import Config
 
-try:
-    import uvloop
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-except:
-    pass
 
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 loop = asyncio.get_event_loop()
-bot = Bot(Config.token, parse_mode='html')
+bot = Bot(
+    token=Config.token,
+    loop=loop,
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
 dp = Dispatcher(loop=loop, storage=MemoryStorage())
 
 ENGINE = create_async_engine(url=Config.db_url)
+
+redis_client = Redis(host=Config.redis_host, port=Config.redis_port, db=0)
 
 
 async def set_main_menu():
@@ -33,7 +39,7 @@ async def set_main_menu():
 
 
 def log_error(message, with_traceback: bool = True):
-    now = datetime.now(Config.tz)
+    now = datetime.now()
     log_folder = now.strftime ('%m-%Y')
     log_path = os.path.join('logs', log_folder)
 

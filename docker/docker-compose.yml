@@ -1,0 +1,56 @@
+
+services:
+  db:
+    image: postgres:latest
+    container_name: db_antispam
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+
+  pgadmin:
+    image: elestio/pgadmin
+    container_name: pgadmin_antispam
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    restart: unless-stopped
+    env_file:
+      - .env
+
+  bot:
+    build:
+      context: ..
+      dockerfile: docker/dockerfiles/DockerfileBot
+      args:
+        - --no-cache
+    container_name: bot_antispam
+    volumes:
+      - ../bot:/app
+      - ../logs/bot:/app/logs
+    restart: unless-stopped
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+  redis:
+    image: redis:latest
+    container_name: redis_bx
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory-policy noeviction
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  redis_data:
+    driver: local

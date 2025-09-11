@@ -6,7 +6,6 @@ import db
 import keyboards as kb
 from init import dp
 from config import Config
-from utils import local_data_utils as dt
 from utils.message_utils import get_admin_start_screen
 from enums import AdminCB
 

@@ -2,6 +2,7 @@ import os
 import json
 
 import typing as t
+from aiocache import cached
 
 from config import Config
 
@@ -9,7 +10,6 @@ from config import Config
 # проверка наличия файлов при запуске
 def check_data_files_on_start():
     data_file_path = os.path.join (Config.data_path)
-    print(data_file_path, os.path.abspath (data_file_path))
     if not os.path.exists (data_file_path):
         os.makedirs (data_file_path)
 

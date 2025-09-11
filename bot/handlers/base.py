@@ -9,6 +9,7 @@ from init import dp, bot, log_error
 from config import Config
 from utils.message_utils import check_entities
 from utils import local_data_utils as dt
+from utils.redis_ut import save_redis, key_exists
 
 
 async def delete_scam_message(msg: Message, time_start: datetime):
@@ -16,13 +17,16 @@ async def delete_scam_message(msg: Message, time_start: datetime):
     log_error(f'Удалил сообщение', with_traceback=False)
 
     if msg.media_group_id:
-        await db.add_mediagroup(chat_id=msg.chat.id, media_group_id=int(msg.media_group_id))
+        await save_redis(key=msg.media_group_id, value=msg.chat.id, ttl=60)
+        # await db.add_mediagroup(chat_id=msg.chat.id, media_group_id=int(msg.media_group_id))
 
     log_error (
         f'Баню пользователя: '
         f'{msg.from_user.id, msg.from_user.full_name, msg.from_user.username}\n'
         f'В чате {msg.chat.title}\n'
-        f'Текст: {msg.text}', with_traceback=False)
+        f'Текст: {msg.text}',
+        with_traceback=False
+    )
     try:
         await bot.ban_chat_member(
             chat_id=msg.chat.id,
@@ -38,9 +42,8 @@ async def delete_scam_message(msg: Message, time_start: datetime):
 @dp.message(lambda msg: msg.chat.type == 'supergroup' or msg.chat.type == 'group')
 @dp.edited_message(lambda msg: msg.chat.type == 'supergroup' or msg.chat.type == 'group')
 async def antispam(msg: Message):
-    # await db.add_chat(chat_id=msg.chat.id, chat_title=msg.chat.title)
     time_start = datetime.now()
-    # print(msg.from_user)
+    # print(f'{msg.from_user.id} | {msg.from_user.full_name} | {msg.chat.title}')
     white_list = dt.get_white_list ()
     is_admin = False
 
@@ -58,20 +61,14 @@ async def antispam(msg: Message):
         except:
             pass
 
-    # is_admin = False
-    if is_admin:
-        pass
-    else:
-        text = msg.text if msg.text is not None else msg.caption
+    if Config.debug:
+        is_admin = False
 
-        arabic_name = Config.arabic_pattern.findall (msg.from_user.full_name)
-        if arabic_name or msg.from_user.is_bot:
-            # log_error (f'\nАрабик: {msg.from_user.full_name}\n', with_traceback=False)
-            pass
+    if not is_admin:
+        text = msg.text if msg.text is not None else msg.caption
 
         if text:
             entities = msg.entities if msg.entities else msg.caption_entities
-
             # если по вложениям всё ок
             if check_entities(entities):
                 await delete_scam_message (
@@ -79,17 +76,10 @@ async def antispam(msg: Message):
                     time_start=time_start)
                 return
 
-            arabic_text = Config.arabic_pattern.findall (text)
-            if arabic_text:
-                pass
-                # log_error(f'\nАрабик: {msg.from_user.full_name}\n')
-                # await delete_scam_message (
-                #     msg=msg,
-                #     time_start=time_start)
-                # return
-
         if msg.media_group_id:
-            result = await db.get_mediagroup(int(msg.media_group_id))
+            # result = await db.get_mediagroup(int(msg.media_group_id))
+            print(f'msg.media_group_id: {msg.media_group_id} {type(msg.media_group_id)}')
+            result = await key_exists(msg.media_group_id)
             if result:
                 await msg.delete()
                 return

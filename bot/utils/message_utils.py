@@ -9,7 +9,7 @@ from utils import local_data_utils as dt
 async def get_admin_start_screen(user_id: int, message_id: int = None):
     white_list = dt.get_white_list ()
     if white_list:
-        white_text = '<b>Белый список:</b>'
+        white_text = '<b>Белый список:</b>\n'
         for user in white_list:
             white_text += f'{user}\n'
     else:

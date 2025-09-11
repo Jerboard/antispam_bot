@@ -5,11 +5,13 @@ import asyncio
 from handlers import dp
 from init import log_error, bot, set_main_menu
 from config import Config
+from db.base import init_models
 from utils.local_data_utils import check_data_files_on_start
 
 
 async def main() -> None:
     check_data_files_on_start()
+    await init_models()
     await set_main_menu()
     await dp.start_polling(bot)
 
