@@ -61,8 +61,8 @@ async def antispam(msg: Message):
         except:
             pass
 
-    if Config.debug:
-        is_admin = False
+    # if Config.debug:
+    #     is_admin = False
 
     if not is_admin:
         text = msg.text if msg.text is not None else msg.caption

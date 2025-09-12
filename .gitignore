@@ -1,2 +1,5 @@
 /antispam.session
-/.env
+docker/.env
+/.venv/
+*/__pycache/
+.idea
