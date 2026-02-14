@@ -78,7 +78,7 @@ async def antispam(msg: Message):
 
         if msg.media_group_id:
             # result = await db.get_mediagroup(int(msg.media_group_id))
-            print(f'msg.media_group_id: {msg.media_group_id} {type(msg.media_group_id)}')
+            # print(f'msg.media_group_id: {msg.media_group_id} {type(msg.media_group_id)}')
             result = await key_exists(msg.media_group_id)
             if result:
                 await msg.delete()

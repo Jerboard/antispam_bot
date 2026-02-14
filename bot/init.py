@@ -18,13 +18,19 @@ from config import Config
 
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-loop = asyncio.get_event_loop()
+# loop = asyncio.get_event_loop()
+# bot = Bot(
+#     token=Config.token,
+#     loop=loop,
+#     default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+# )
+dp = Dispatcher(storage=MemoryStorage())
+
 bot = Bot(
     token=Config.token,
-    loop=loop,
     default=DefaultBotProperties(parse_mode=ParseMode.HTML)
 )
-dp = Dispatcher(loop=loop, storage=MemoryStorage())
+
 
 ENGINE = create_async_engine(url=Config.db_url)
 
