@@ -30,7 +30,7 @@ class Config:
         api_hash = getenv('STATS_API_HASH')
 
         phone = getenv('STATS_PHONE')
-        session_name = getenv('STATS_SESSION_NAME')
+        session_name = getenv('STATS_SESSION_NAME') or 'user_sessions'
 
         sheet_id = getenv('SHEET_ID')
 
