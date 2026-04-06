@@ -1,0 +1,23 @@
+import logging
+
+from telethon import events
+from telethon.types import Message
+
+from init import client
+from settings import conf
+from tasks import schedule_message_check
+
+
+@client.on(events.NewMessage)
+async def channel_message_handler(event):
+    if not event.is_channel and event.chat_id not in [conf.channel_1, conf.channel_2]:
+        return
+
+    message = event.message
+    # logging.warning(f'message {event.chat.title} {event.chat.id} {message.id}')
+
+    schedule_message_check(
+        chat_id=event.chat_id,
+        message_id=message.id,
+    )
+

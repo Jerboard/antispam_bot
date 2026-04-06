@@ -1,3 +1,9 @@
 telethon
 gspread
 apscheduler
+python-dotenv
+sqlalchemy
+alembic
+asyncpg
+google-auth
+pysocks
