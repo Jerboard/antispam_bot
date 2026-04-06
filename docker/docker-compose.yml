@@ -10,7 +10,6 @@ services:
     env_file:
       - .env
 
-
   pgadmin:
     image: elestio/pgadmin
     container_name: pgadmin_antispam
@@ -22,7 +21,18 @@ services:
     env_file:
       - .env
 
-  bot:
+  redis:
+    image: redis:latest
+    container_name: redis_bx
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory-policy noeviction
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+  bot_antispam:
     build:
       context: ..
       dockerfile: docker/dockerfiles/DockerfileBot
@@ -38,16 +48,21 @@ services:
     env_file:
       - .env
 
-  redis:
-    image: redis:latest
-    container_name: redis_bx
-    command: >
-      redis-server
-      --appendonly yes
-      --maxmemory-policy noeviction
-    restart: unless-stopped
+  bot_stats:
+    build:
+      context: ..
+      dockerfile: docker/dockerfiles/DockerfileBotStats
+      args:
+        - --no-cache
+    container_name: bot_stats
     volumes:
-      - redis_data:/data
+      - ../bot_stats:/app
+      - ../logs/bot_stats:/app/logs
+#    restart: unless-stopped
+    depends_on:
+      - db
+    env_file:
+      - .env
 
 volumes:
   postgres_data:

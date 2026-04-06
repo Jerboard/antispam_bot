@@ -1,0 +1,7 @@
+SQLAlchemy
+tgcrypto
+uvloop
+asyncpg
+aiogram
+aiocache
+redis

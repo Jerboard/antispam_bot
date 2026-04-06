@@ -5,9 +5,9 @@ RUN apt-get update
 
 WORKDIR /app
 
-COPY /requirements/bot.txt .
-RUN pip install --no-cache-dir -r bot.txt
+COPY /requirements/bot_stats.txt .
+RUN pip install --no-cache-dir -r bot_stats.txt
 
-COPY /bot .
+COPY /bot_stats .
 
 CMD ["sh", "-c", "python main.py"]
