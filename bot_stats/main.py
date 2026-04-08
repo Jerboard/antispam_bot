@@ -19,7 +19,7 @@ async def main():
     await start_scheduler()
 
     print("Авторизован, запускаем обработчики…")
-    # await client.run_until_disconnected()
+    await client.run_until_disconnected()
 
 
 if __name__ == "__main__":
