@@ -16,31 +16,31 @@ logger = logging.getLogger(__name__)
 
 async def start_scheduler():
     pass
-    await collect_channels_summary()
-    await save_channel_delta()
+    # await collect_channels_summary()
+    # await save_channel_delta()
 
-    # scheduler.add_job(
-    #     save_channel_delta,
-    #     trigger="cron",
-    #     minute="*/10",
-    #     id="save_channel_delta",
-    #     replace_existing=True,
-    #     max_instances=1,
-    #     coalesce=True,
-    #     misfire_grace_time=3600,
-    # )
-    #
-    # scheduler.add_job(
-    #     collect_channels_summary,
-    #     trigger="cron",
-    #     hour=21,
-    #     minute=0,
-    #     id="collect_channels_summary",
-    #     replace_existing=True,
-    #     max_instances=1,
-    #     coalesce=True,
-    #     misfire_grace_time=3600,
-    # )
+    scheduler.add_job(
+        save_channel_delta,
+        trigger="cron",
+        minute="*/10",
+        id="save_channel_delta",
+        replace_existing=True,
+        max_instances=1,
+        coalesce=True,
+        misfire_grace_time=3600,
+    )
+
+    scheduler.add_job(
+        collect_channels_summary,
+        trigger="cron",
+        hour=21,
+        minute=0,
+        id="collect_channels_summary",
+        replace_existing=True,
+        max_instances=1,
+        coalesce=True,
+        misfire_grace_time=3600,
+    )
     scheduler.start()
 
 
